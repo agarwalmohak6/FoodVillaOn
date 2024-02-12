@@ -1,4 +1,4 @@
-import React, { lazy , Suspense, useState} from "react";
+import React, { lazy, Suspense, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
@@ -16,7 +16,7 @@ import Shimmer from "./components/Shimmer";
 import { Provider } from "react-redux";
 import store from "./utils/store";
 import Cart from "./components/Cart";
-
+import cors from "cors";
 
 // import Instamart from "./components/Instamart";
 
@@ -24,80 +24,79 @@ import Cart from "./components/Cart";
 //this is chunking or dynamic import
 // this become different bundle all together so it takes time to load script so meanwhile react tries to suspend it as it is not  initiall therey so it throws error
 
-// this import is not normal import it is a promise 
+// this import is not normal import it is a promise
 const Instamart = lazy(() => import("./components/Instamart"));
 // upon on demand loading -> upon render => suspend loading
 // to handle this we use suspense so we wrap inside suspense
 
 // never try to dynamic load component inside another component
-
+app.use(cors());
 const AppLayout = () => {
-
   // never do this (inside component dynamic loading )
-  // coz after every render it reload again make website slower 
+  // coz after every render it reload again make website slower
   // const Instamart = lazy(() => import("./components/Instamart"));
-  
+
   // const [user, setUser] = useState({
   //   name: "Priyanshi Agrawal",
   //   email: "apriyanshi637@gmail.com"
   // })
-  
+
   return (
-    <React.Fragment> 
+    <React.Fragment>
       <Provider store={store}>
-          <Header />
-          <Outlet />
-          {/* <Body /> */}
-          <Footer />  
-        </Provider>
-      </React.Fragment>
-    );
-}
+        <Header />
+        <Outlet />
+        {/* <Body /> */}
+        <Footer />
+      </Provider>
+    </React.Fragment>
+  );
+};
 
 const appRouter = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <AppLayout />,
-    errorElement: <Error /> ,
+    errorElement: <Error />,
     children: [
       {
-        path: '/about',
+        path: "/about",
         element: <About />,
         children: [
           {
             path: "profile",
-            element : <Profile />
-          }
+            element: <Profile />,
+          },
         ],
       },
       {
-        path: '/contact',
-        element:<Contact/>
+        path: "/contact",
+        element: <Contact />,
       },
       {
-        path: '/',
-        element: <Body />
+        path: "/",
+        element: <Body />,
       },
       {
-        path: '/restaurant/:id',
-        element: <RestaurantMenu />
+        path: "/restaurant/:id",
+        element: <RestaurantMenu />,
       },
       {
-        path: '/instamart',
+        path: "/instamart",
         element: (
-          // this fallback is a prop which here we can show anything until our main component is loaded 
-          <Suspense fallback={ <Shimmer /> }>
-            <Instamart /> 
+          // this fallback is a prop which here we can show anything until our main component is loaded
+          <Suspense fallback={<Shimmer />}>
+            <Instamart />
           </Suspense>
-        ), 
+        ),
       },
       {
         path: "/cart",
-        element: <Cart/>
-      }
-    ]
+        element: <Cart />,
+      },
+    ],
   },
-])
+]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<RouterProvider router={appRouter}/>);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<RouterProvider router={appRouter} />);
